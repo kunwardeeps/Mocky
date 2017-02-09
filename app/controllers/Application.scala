@@ -24,6 +24,8 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
 
   def get(id: String, version: String) = Action.async {
     val repo = Repository(version)
+    lazy val delay = play.api.Play.current.configuration.getString("delay").getOrElse("undefined")
+    Thread.sleep(delay.toLong)
     repo.getMockFromId(id).map { mock =>
       Status(mock.metadata.status)(repo.decodeBody(mock.content, mock.metadata.charset))
         .withHeaders(mock.metadata.headers.toSeq: _*)
